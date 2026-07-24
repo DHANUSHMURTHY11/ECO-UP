@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Sparkles, ArrowRight, Mail } from 'lucide-react';
+import { Sparkles, ArrowRight, Puzzle, CheckCircle2, RotateCcw } from 'lucide-react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
+import confetti from 'canvas-confetti';
 
 const poemLines = [
   "Roses are red 🌹",
@@ -14,14 +15,54 @@ const poemLines = [
   "Begin unexpectedly. ✨",
 ];
 
+// Easy 3-step initial puzzle state
+const solvedOrder = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const initialScrambled = [0, 2, 1, 3, 4, 5, 6, 8, 7]; // Just 2 tile pairs swapped (super easy 3 taps!)
+
 export const ScenePoemOne: React.FC = () => {
   const { goToScene } = useApp();
-  const { playPop, playStamp } = useAudioEngine();
-  const [envelopeOpen, setEnvelopeOpen] = useState(false);
+  const { playPop, playCelebration } = useAudioEngine();
+  const [tiles, setTiles] = useState<number[]>(initialScrambled);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [isSolved, setIsSolved] = useState(false);
 
-  const handleOpenEnvelope = () => {
-    playStamp();
-    setEnvelopeOpen(true);
+  useEffect(() => {
+    // Check if solved
+    const match = tiles.every((val, idx) => val === solvedOrder[idx]);
+    if (match && !isSolved) {
+      setIsSolved(true);
+      playCelebration();
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: ['#FF85A1', '#FFD166', '#DCC6FF'],
+      });
+    }
+  }, [tiles, isSolved, playCelebration]);
+
+  const handleTileClick = (index: number) => {
+    if (isSolved) return;
+    playPop(550);
+
+    if (selectedIdx === null) {
+      setSelectedIdx(index);
+    } else {
+      // Swap selectedIdx and index
+      const newTiles = [...tiles];
+      const temp = newTiles[selectedIdx];
+      newTiles[selectedIdx] = newTiles[index];
+      newTiles[index] = temp;
+      setTiles(newTiles);
+      setSelectedIdx(null);
+    }
+  };
+
+  const handleResetPuzzle = () => {
+    playPop(400);
+    setTiles(initialScrambled);
+    setSelectedIdx(null);
+    setIsSolved(false);
   };
 
   const handleNext = () => {
@@ -32,42 +73,73 @@ export const ScenePoemOne: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center">
-        {!envelopeOpen ? (
-          /* Wax Seal Envelope */
+        {!isSolved ? (
+          /* 3x3 Grid Puzzle Section */
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-full bg-gradient-to-tr from-pink-100 to-amber-50 border-2 border-pink-200 p-8 rounded-3xl shadow-2xl text-center relative flex flex-col items-center justify-center min-h-[300px]"
+            className="w-full bg-white/90 backdrop-blur-xl border-2 border-pink-200 p-6 rounded-3xl shadow-2xl text-center relative flex flex-col items-center"
           >
-            <div className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-xl mb-4 border-2 border-white animate-pulse">
-              <Mail className="w-8 h-8" />
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-100 text-pink-600 font-extrabold text-xs uppercase tracking-wider mb-3 border border-pink-200">
+              <Puzzle className="w-4 h-4 text-pink-500" />
+              <span>Easy 3x3 Puzzle</span>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
-              A Special Note for You ✉️
+            <h3 className="text-xl font-extrabold text-gray-800 mb-1 font-heading">
+              Solve the Puzzle to Know More! 🧩
             </h3>
-            <p className="text-xs text-gray-500 mb-6 font-medium">
-              Tap the wax seal to unseal...
+            <p className="text-xs text-gray-500 mb-4 font-medium">
+              Tap 2 tiles to swap them into place!
             </p>
 
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={handleOpenEnvelope}
-              className="py-3 px-8 rounded-full bg-rose-500 text-white font-extrabold text-sm shadow-lg hover:shadow-rose-300 transition-all border border-white"
+            {/* 3x3 Grid Container */}
+            <div className="w-64 h-64 sm:w-72 sm:h-72 grid grid-cols-3 grid-rows-3 gap-1 bg-pink-200 p-1.5 rounded-2xl shadow-inner mb-4 relative overflow-hidden">
+              {tiles.map((tileId, gridIdx) => {
+                const origRow = Math.floor(tileId / 3);
+                const origCol = tileId % 3;
+                const isSelected = selectedIdx === gridIdx;
+
+                return (
+                  <motion.div
+                    key={gridIdx}
+                    onClick={() => handleTileClick(gridIdx)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative cursor-pointer rounded-xl overflow-hidden shadow-sm transition-all ${
+                      isSelected ? 'ring-4 ring-pink-500 scale-105 z-10' : ''
+                    }`}
+                    style={{
+                      backgroundImage: `url('./assets/story/zootopia_puzzle.jpg')`,
+                      backgroundSize: '300% 300%',
+                      backgroundPosition: `${origCol * 50}% ${origRow * 50}%`,
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            <button
+              onClick={handleResetPuzzle}
+              className="text-xs text-gray-500 hover:text-pink-500 font-semibold flex items-center gap-1 transition-colors"
             >
-              Break Wax Seal 💌
-            </motion.button>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Tiles</span>
+            </button>
           </motion.div>
         ) : (
-          /* Poem Glass Card */
+          /* Unlocked Poem Glass Card */
           <AnimatePresence>
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              className="w-full bg-white/80 backdrop-blur-lg border border-white/80 p-8 rounded-3xl shadow-2xl text-center mb-8 relative overflow-hidden"
+              className="w-full bg-white/90 backdrop-blur-lg border-2 border-pink-200 p-8 rounded-3xl shadow-2xl text-center mb-8 relative overflow-hidden"
             >
-              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 text-emerald-600 font-extrabold text-sm mb-4 bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200 w-max mx-auto">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Puzzle Solved! 🧩✨</span>
+              </div>
+
+              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center gap-2 font-heading">
                 <span>A Little Poem</span>
                 <Sparkles className="w-4 h-4 text-pink-400" />
               </h2>
@@ -78,7 +150,7 @@ export const ScenePoemOne: React.FC = () => {
                     key={idx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: idx * 0.2 }}
+                    transition={{ duration: 0.4, delay: idx * 0.15 }}
                     className={`text-base sm:text-lg ${
                       idx === 2 || idx === 3 || idx === 6
                         ? 'font-bold text-pink-600'
@@ -93,14 +165,14 @@ export const ScenePoemOne: React.FC = () => {
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.8 }}
+                transition={{ delay: 1.2 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
-                className="py-3.5 px-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-base shadow-lg hover:shadow-pink-200 transition-all flex items-center justify-center gap-2 border border-white/40"
+                className="py-3.5 px-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-400 text-white font-extrabold text-base shadow-lg hover:shadow-pink-200 transition-all flex items-center justify-center gap-2 border border-white/40"
               >
-                <span>View Memories ✨ →</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>THIS COULD BE US !! ✨ →</span>
+                <ArrowRight className="w-5 h-5" />
               </motion.button>
             </motion.div>
           </AnimatePresence>
