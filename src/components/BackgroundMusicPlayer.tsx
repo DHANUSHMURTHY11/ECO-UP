@@ -1,63 +1,87 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 
+const BASE = import.meta.env.BASE_URL || './';
+
 const sceneTrackMap: Record<string, string> = {
-  CAT_INTRO: './assets/audio/beginning_song.mpeg',
-  FLOWER_GIFT: './assets/audio/beginning_song.mpeg',
-  HEART_CONNECTION: './assets/audio/beginning_song.mpeg',
-  POEM_ONE: './assets/audio/poem_song.mpeg',
-  PROMISE_SECTION: './assets/audio/poem_song.mpeg',
-  MEMORIES_GALLERY: './assets/audio/this_could_be_us_song.mpeg',
-  PROPOSAL_QUESTION: './assets/audio/this_could_be_us_song.mpeg',
-  NO_GRACEFUL: './assets/audio/this_could_be_us_song.mpeg',
-  YES_CELEBRATION: './assets/audio/celebration_song.mpeg',
-  CONTRACT: './assets/audio/celebration_song.mpeg',
-  POST_SIGNATURE: './assets/audio/celebration_song.mpeg',
-  GRAND_FINALE: './assets/audio/celebration_song.mpeg',
+  CAT_INTRO: `${BASE}assets/audio/beginning_song.mpeg`,
+  FLOWER_GIFT: `${BASE}assets/audio/beginning_song.mpeg`,
+  HEART_CONNECTION: `${BASE}assets/audio/beginning_song.mpeg`,
+  POEM_ONE: `${BASE}assets/audio/poem_song.mpeg`,
+  PROMISE_SECTION: `${BASE}assets/audio/poem_song.mpeg`,
+  MEMORIES_GALLERY: `${BASE}assets/audio/this_could_be_us_song.mpeg`,
+  PROPOSAL_QUESTION: `${BASE}assets/audio/this_could_be_us_song.mpeg`,
+  NO_GRACEFUL: `${BASE}assets/audio/this_could_be_us_song.mpeg`,
+  YES_CELEBRATION: `${BASE}assets/audio/celebration_song.mpeg`,
+  CONTRACT: `${BASE}assets/audio/celebration_song.mpeg`,
+  POST_SIGNATURE: `${BASE}assets/audio/celebration_song.mpeg`,
+  GRAND_FINALE: `${BASE}assets/audio/celebration_song.mpeg`,
 };
 
 export const BackgroundMusicPlayer: React.FC = () => {
   const { state, dispatch } = useApp();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const currentTrackRef = useRef<string | null>(null);
+  const hasInteracted = useRef(false);
 
-  // User Interaction Auto-Start Listener
-  useEffect(() => {
-    const handleFirstTouch = () => {
-      if (!state.audioStarted) {
-        dispatch({ type: 'START_AUDIO' });
+  // Auto-start audio on first user interaction (click/touch)
+  const handleInteraction = useCallback(() => {
+    if (hasInteracted.current) return;
+    hasInteracted.current = true;
+
+    if (!state.audioStarted) {
+      dispatch({ type: 'START_AUDIO' });
+    }
+
+    // Immediately try to play the current track on first interaction
+    if (audioRef.current) {
+      const targetTrack = sceneTrackMap[state.currentScene] || sceneTrackMap.CAT_INTRO;
+      if (!currentTrackRef.current) {
+        currentTrackRef.current = targetTrack;
+        audioRef.current.src = targetTrack;
+        audioRef.current.load();
       }
-    };
+      audioRef.current.volume = 0.7;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [state.audioStarted, state.currentScene, dispatch]);
 
-    window.addEventListener('click', handleFirstTouch, { once: true });
-    window.addEventListener('touchstart', handleFirstTouch, { once: true });
+  useEffect(() => {
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
 
     return () => {
-      window.removeEventListener('click', handleFirstTouch);
-      window.removeEventListener('touchstart', handleFirstTouch);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
     };
-  }, [state.audioStarted, dispatch]);
+  }, [handleInteraction]);
 
-  // Track Selector & Audio Controller
+  // Track Selector & Audio Controller - switches tracks on scene change
   useEffect(() => {
     if (!audioRef.current) return;
 
-    const targetTrack = sceneTrackMap[state.currentScene] || './assets/audio/beginning_song.mpeg';
+    const targetTrack = sceneTrackMap[state.currentScene] || sceneTrackMap.CAT_INTRO;
 
-    // Mute Controller
-    audioRef.current.muted = state.audioMuted || !state.audioStarted;
+    // Handle mute state
+    if (state.audioMuted || !state.audioStarted) {
+      audioRef.current.pause();
+      return;
+    }
 
-    // Track Switcher
+    // Switch track if scene changed to a new track
     if (currentTrackRef.current !== targetTrack) {
+      // Fade out then switch
       currentTrackRef.current = targetTrack;
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       audioRef.current.src = targetTrack;
       audioRef.current.load();
-
-      if (state.audioStarted && !state.audioMuted) {
-        audioRef.current.play().catch(() => {});
-      }
+      audioRef.current.volume = 0.7;
+      audioRef.current.play().catch(() => {});
     } else {
-      if (state.audioStarted && !state.audioMuted && audioRef.current.paused) {
+      // Same track, ensure it's playing
+      if (audioRef.current.paused) {
+        audioRef.current.volume = 0.7;
         audioRef.current.play().catch(() => {});
       }
     }
@@ -68,7 +92,7 @@ export const BackgroundMusicPlayer: React.FC = () => {
       ref={audioRef}
       loop
       preload="auto"
-      className="hidden"
+      style={{ display: 'none' }}
     />
   );
 };

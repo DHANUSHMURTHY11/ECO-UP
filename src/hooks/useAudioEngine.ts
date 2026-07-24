@@ -138,63 +138,8 @@ export const useAudioEngine = () => {
     } catch {}
   }, [state.audioMuted, state.audioStarted, getAudioContext]);
 
-  // Background Melody Loop (Lofi Disney style chord progression)
-  useEffect(() => {
-    if (!state.audioStarted || state.audioMuted) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      isPlayingRef.current = false;
-      return;
-    }
-
-    if (isPlayingRef.current) return;
-    isPlayingRef.current = true;
-
-    // Soft Arpeggio Notes (C maj7 -> Am7 -> F maj7 -> G7)
-    const chords = [
-      [261.63, 329.63, 392.00, 493.88], // Cmaj7
-      [220.00, 261.63, 329.63, 392.00], // Am7
-      [174.61, 220.00, 261.63, 329.63], // Fmaj7
-      [196.00, 246.94, 293.66, 349.23], // G7
-    ];
-
-    let chordIndex = 0;
-    let noteIndex = 0;
-
-    const playNextNote = () => {
-      if (state.audioMuted) return;
-      try {
-        const ctx = getAudioContext();
-        const currentChord = chords[chordIndex];
-        const freq = currentChord[noteIndex];
-
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-        gain.gain.setValueAtTime(0.02, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0005, ctx.currentTime + 0.8);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start();
-        osc.stop(ctx.currentTime + 0.8);
-
-        noteIndex = (noteIndex + 1) % currentChord.length;
-        if (noteIndex === 0) {
-          chordIndex = (chordIndex + 1) % chords.length;
-        }
-      } catch {}
-    };
-
-    timerRef.current = window.setInterval(playNextNote, 600);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      isPlayingRef.current = false;
-    };
-  }, [state.audioStarted, state.audioMuted, getAudioContext]);
+  // Background melody is now handled by BackgroundMusicPlayer component
+  // with real music tracks (beginning_song, poem_song, this_could_be_us_song, celebration_song)
 
   return {
     playPop,
