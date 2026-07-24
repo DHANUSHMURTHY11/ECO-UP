@@ -1,48 +1,65 @@
 export type SceneType =
   | 'LOADING'
   | 'CAT_INTRO'
+  | 'FLOWER_GIFT'
+  | 'HEART_CONNECTION'
   | 'POEM_ONE'
-  | 'PET_GAME'
-  | 'SUSPENSE_PROPOSAL'
+  | 'FLOWER_DRAG'
+  | 'MEMORIES_GALLERY'
   | 'PROPOSAL_QUESTION'
   | 'NO_GRACEFUL'
   | 'YES_CELEBRATION'
-  | 'DELIVERY_CAR'
   | 'CONTRACT'
+  | 'POST_SIGNATURE'
   | 'GRAND_FINALE';
 
-export type CatMood = 'happy' | 'purring' | 'blushing' | 'sleeping' | 'waving' | 'excited' | 'shy';
+export type CatMood =
+  | 'happy'
+  | 'nervous'
+  | 'shy'
+  | 'crying'
+  | 'sleeping'
+  | 'excited'
+  | 'in_love'
+  | 'embarrassed'
+  | 'celebrating'
+  | 'kisses'
+  | 'purring'
+  | 'waving';
+
+export interface MemorySlide {
+  id: number;
+  image: string;
+  caption: string;
+  subcaption?: string;
+}
 
 export interface AppState {
   currentScene: SceneType;
   audioMuted: boolean;
   audioStarted: boolean;
-  petProgress: number; // 0 to 100
+  activeSlideIndex: number;
   noDodgeCount: number;
   catTapCount: number;
   catMood: CatMood;
   isNightMode: boolean;
+  isGoldenHour: boolean;
   signatureData: string | null;
   proposalResult: 'accepted' | 'declined' | null;
-  easterEggsUnlocked: {
-    blushingCat: boolean;
-    shootingStars: boolean;
-    discoCats: boolean;
-    sleepingCat: boolean;
-    secretMeow: boolean;
-  };
+  bouquetAccepted: boolean;
 }
 
 export type AppAction =
   | { type: 'SET_SCENE'; payload: SceneType }
   | { type: 'TOGGLE_AUDIO' }
   | { type: 'START_AUDIO' }
-  | { type: 'PET_CAT'; payload: number }
+  | { type: 'SET_SLIDE_INDEX'; payload: number }
   | { type: 'INCREMENT_NO_DODGE' }
   | { type: 'TAP_CAT' }
   | { type: 'SET_CAT_MOOD'; payload: CatMood }
   | { type: 'SET_NIGHT_MODE'; payload: boolean }
+  | { type: 'SET_GOLDEN_HOUR'; payload: boolean }
+  | { type: 'ACCEPT_BOUQUET' }
   | { type: 'SET_SIGNATURE'; payload: string }
   | { type: 'SET_PROPOSAL_RESULT'; payload: 'accepted' | 'declined' }
-  | { type: 'UNLOCK_EASTER_EGG'; payload: keyof AppState['easterEggsUnlocked'] }
   | { type: 'RESET_APP' };

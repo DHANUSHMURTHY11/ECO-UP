@@ -5,20 +5,15 @@ const initialState: AppState = {
   currentScene: 'LOADING',
   audioMuted: false,
   audioStarted: false,
-  petProgress: 0,
+  activeSlideIndex: 0,
   noDodgeCount: 0,
   catTapCount: 0,
   catMood: 'happy',
   isNightMode: false,
+  isGoldenHour: false,
   signatureData: null,
   proposalResult: null,
-  easterEggsUnlocked: {
-    blushingCat: false,
-    shootingStars: false,
-    discoCats: false,
-    sleepingCat: false,
-    secretMeow: false,
-  },
+  bouquetAccepted: false,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -29,36 +24,24 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, audioMuted: !state.audioMuted };
     case 'START_AUDIO':
       return { ...state, audioStarted: true };
-    case 'PET_CAT': {
-      const nextProgress = Math.min(100, state.petProgress + action.payload);
-      const mood = nextProgress >= 100 ? 'excited' : nextProgress > 50 ? 'purring' : 'happy';
-      return { ...state, petProgress: nextProgress, catMood: mood };
-    }
+    case 'SET_SLIDE_INDEX':
+      return { ...state, activeSlideIndex: action.payload };
     case 'INCREMENT_NO_DODGE':
       return { ...state, noDodgeCount: state.noDodgeCount + 1 };
-    case 'TAP_CAT': {
-      const newTaps = state.catTapCount + 1;
-      let newMood = state.catMood;
-      let newEasterEggs = { ...state.easterEggsUnlocked };
-      if (newTaps >= 10 && !newEasterEggs.blushingCat) {
-        newMood = 'blushing';
-        newEasterEggs.blushingCat = true;
-      }
-      return { ...state, catTapCount: newTaps, catMood: newMood, easterEggsUnlocked: newEasterEggs };
-    }
+    case 'TAP_CAT':
+      return { ...state, catTapCount: state.catTapCount + 1 };
     case 'SET_CAT_MOOD':
       return { ...state, catMood: action.payload };
     case 'SET_NIGHT_MODE':
-      return { ...state, isNightMode: action.payload };
+      return { ...state, isNightMode: action.payload, isGoldenHour: false };
+    case 'SET_GOLDEN_HOUR':
+      return { ...state, isGoldenHour: action.payload, isNightMode: false };
+    case 'ACCEPT_BOUQUET':
+      return { ...state, bouquetAccepted: true, catMood: 'embarrassed' };
     case 'SET_SIGNATURE':
       return { ...state, signatureData: action.payload };
     case 'SET_PROPOSAL_RESULT':
       return { ...state, proposalResult: action.payload };
-    case 'UNLOCK_EASTER_EGG':
-      return {
-        ...state,
-        easterEggsUnlocked: { ...state.easterEggsUnlocked, [action.payload]: true },
-      };
     case 'RESET_APP':
       return { ...initialState, audioStarted: state.audioStarted, audioMuted: state.audioMuted };
     default:

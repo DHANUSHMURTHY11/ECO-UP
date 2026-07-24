@@ -6,14 +6,13 @@ import { NavigationHeader } from './components/NavigationHeader';
 
 import { SceneLoading } from './pages/SceneLoading';
 import { SceneCatIntro } from './pages/SceneCatIntro';
+import { SceneFlowerGift } from './pages/SceneFlowerGift';
+import { SceneHeartConnection } from './pages/SceneHeartConnection';
 import { ScenePoemOne } from './pages/ScenePoemOne';
-import { SceneMiniGame } from './pages/SceneMiniGame';
-import { SceneSuspenseProposal } from './pages/SceneSuspenseProposal';
+import { SceneMemoriesGallery } from './pages/SceneMemoriesGallery';
 import { SceneProposal } from './pages/SceneProposal';
 import { SceneNoGraceful } from './pages/SceneNoGraceful';
 import { SceneYesCelebration } from './pages/SceneYesCelebration';
-import { SceneDeliveryCar } from './pages/SceneDeliveryCar';
-import { SceneContract } from './pages/SceneContract';
 import { SceneFinalGrand } from './pages/SceneFinalGrand';
 
 export const AppContent: React.FC = () => {
@@ -22,10 +21,15 @@ export const AppContent: React.FC = () => {
   useEffect(() => {
     if (state.isNightMode) {
       document.body.classList.add('night-mode');
+      document.body.classList.remove('golden-hour');
+    } else if (state.isGoldenHour) {
+      document.body.classList.add('golden-hour');
+      document.body.classList.remove('night-mode');
     } else {
       document.body.classList.remove('night-mode');
+      document.body.classList.remove('golden-hour');
     }
-  }, [state.isNightMode]);
+  }, [state.isNightMode, state.isGoldenHour]);
 
   const renderScene = () => {
     switch (state.currentScene) {
@@ -33,22 +37,20 @@ export const AppContent: React.FC = () => {
         return <SceneLoading key="loading" />;
       case 'CAT_INTRO':
         return <SceneCatIntro key="cat_intro" />;
+      case 'FLOWER_GIFT':
+        return <SceneFlowerGift key="flower_gift" />;
+      case 'HEART_CONNECTION':
+        return <SceneHeartConnection key="heart_connection" />;
       case 'POEM_ONE':
         return <ScenePoemOne key="poem_one" />;
-      case 'PET_GAME':
-        return <SceneMiniGame key="pet_game" />;
-      case 'SUSPENSE_PROPOSAL':
-        return <SceneSuspenseProposal key="suspense" />;
+      case 'MEMORIES_GALLERY':
+        return <SceneMemoriesGallery key="memories_gallery" />;
       case 'PROPOSAL_QUESTION':
         return <SceneProposal key="proposal" />;
       case 'NO_GRACEFUL':
         return <SceneNoGraceful key="no_graceful" />;
       case 'YES_CELEBRATION':
         return <SceneYesCelebration key="yes_celebration" />;
-      case 'DELIVERY_CAR':
-        return <SceneDeliveryCar key="delivery_car" />;
-      case 'CONTRACT':
-        return <SceneContract key="contract" />;
       case 'GRAND_FINALE':
         return <SceneFinalGrand key="grand_finale" />;
       default:
@@ -58,13 +60,9 @@ export const AppContent: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background Particles Canvas */}
       <FloatingParticles />
-
-      {/* Persistent Navigation Header */}
       <NavigationHeader />
 
-      {/* Animated Scene Transition Container */}
       <main className="relative z-10 w-full min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div

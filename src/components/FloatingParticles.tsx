@@ -8,7 +8,7 @@ interface Particle {
   speedY: number;
   speedX: number;
   opacity: number;
-  type: 'heart' | 'sparkle' | 'petal' | 'star' | 'bubble' | 'paw';
+  type: 'heart' | 'sparkle' | 'petal' | 'star' | 'bubble' | 'paw' | 'cloud' | 'balloon' | 'butterfly' | 'flower';
   rotation: number;
   rotSpeed: number;
   color: string;
@@ -20,7 +20,7 @@ interface TrailItem {
   size: number;
   opacity: number;
   color: string;
-  type: 'sparkle' | 'paw' | 'heart';
+  type: 'sparkle' | 'paw' | 'heart' | 'flower';
 }
 
 export const FloatingParticles: React.FC = () => {
@@ -45,31 +45,29 @@ export const FloatingParticles: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Particle colors
     const dayColors = ['#FF85A1', '#FFD6E8', '#DCC6FF', '#CDEEFF', '#FFD9C2', '#FFD166'];
+    const goldenColors = ['#F59E0B', '#FBBF24', '#F472B6', '#FCE7F3', '#FDE047'];
     const nightColors = ['#E2E8F0', '#93C5FD', '#FDE047', '#F472B6', '#C084FC'];
 
-    const particleTypes: Particle['type'][] = ['heart', 'sparkle', 'petal', 'star', 'bubble'];
+    const particleTypes: Particle['type'][] = ['heart', 'sparkle', 'petal', 'star', 'bubble', 'cloud', 'butterfly'];
 
-    // Generate Initial Particles
-    const particleCount = 45;
+    const particleCount = 55;
     const particles: Particle[] = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: 10 + Math.random() * 16,
-      speedY: -(0.4 + Math.random() * 0.8),
-      speedX: (Math.random() - 0.5) * 0.5,
-      opacity: 0.3 + Math.random() * 0.6,
+      size: 10 + Math.random() * 20,
+      speedY: -(0.3 + Math.random() * 0.7),
+      speedX: (Math.random() - 0.5) * 0.6,
+      opacity: 0.35 + Math.random() * 0.55,
       type: particleTypes[Math.floor(Math.random() * particleTypes.length)],
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.02,
       color: dayColors[Math.floor(Math.random() * dayColors.length)],
     }));
 
-    // Mouse Move Sparkle Trail Listener
+    // Mouse Sparkle Trail
     const handleMouseMove = (e: MouseEvent) => {
-      const isNight = state.isNightMode;
-      const colors = isNight ? nightColors : dayColors;
+      const colors = state.isNightMode ? nightColors : state.isGoldenHour ? goldenColors : dayColors;
       trailRef.current.push({
         x: e.clientX,
         y: e.clientY,
@@ -78,22 +76,22 @@ export const FloatingParticles: React.FC = () => {
         color: colors[Math.floor(Math.random() * colors.length)],
         type: Math.random() > 0.5 ? 'sparkle' : 'heart',
       });
-      if (trailRef.current.length > 25) trailRef.current.shift();
+      if (trailRef.current.length > 30) trailRef.current.shift();
     };
 
-    // Click / Tap Paw Print & Heart Burst
+    // Tap/Click Flower Bloom & Paw Print Burst
     const handleClick = (e: MouseEvent | TouchEvent) => {
       const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
       const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
 
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 7; i++) {
         trailRef.current.push({
-          x: clientX + (Math.random() - 0.5) * 40,
-          y: clientY + (Math.random() - 0.5) * 40,
-          size: 14 + Math.random() * 10,
+          x: clientX + (Math.random() - 0.5) * 45,
+          y: clientY + (Math.random() - 0.5) * 45,
+          size: 16 + Math.random() * 12,
           opacity: 1,
           color: dayColors[Math.floor(Math.random() * dayColors.length)],
-          type: i === 0 ? 'paw' : 'heart',
+          type: i === 0 ? 'flower' : i === 1 ? 'paw' : 'heart',
         });
       }
     };
@@ -101,7 +99,6 @@ export const FloatingParticles: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('click', handleClick);
 
-    // Draw Heart shape on canvas
     const drawHeart = (ctx: CanvasRenderingContext2D, size: number, color: string) => {
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -115,14 +112,25 @@ export const FloatingParticles: React.FC = () => {
       ctx.fill();
     };
 
-    // Draw Paw Print
+    const drawFlower = (ctx: CanvasRenderingContext2D, size: number, color: string) => {
+      ctx.fillStyle = color;
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * Math.PI * 2) / 5;
+        ctx.beginPath();
+        ctx.arc(Math.cos(angle) * (size * 0.35), Math.sin(angle) * (size * 0.35), size * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#FFD166';
+      ctx.beginPath();
+      ctx.arc(0, 0, size * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
     const drawPaw = (ctx: CanvasRenderingContext2D, size: number, color: string) => {
       ctx.fillStyle = color;
-      // Main pad
       ctx.beginPath();
       ctx.ellipse(0, 0, size * 0.5, size * 0.4, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Toes
       [-0.4, -0.15, 0.15, 0.4].forEach((angle) => {
         ctx.beginPath();
         const tx = Math.sin(angle) * size * 0.6;
@@ -132,7 +140,6 @@ export const FloatingParticles: React.FC = () => {
       });
     };
 
-    // Draw Sparkle
     const drawSparkle = (ctx: CanvasRenderingContext2D, size: number, color: string) => {
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -144,13 +151,10 @@ export const FloatingParticles: React.FC = () => {
       ctx.fill();
     };
 
-    // Render Animation Loop
     const render = () => {
       ctx.clearRect(0, 0, width, height);
+      const colors = state.isNightMode ? nightColors : state.isGoldenHour ? goldenColors : dayColors;
 
-      const colors = state.isNightMode ? nightColors : dayColors;
-
-      // Update & Render Background Floating Particles
       particles.forEach((p) => {
         p.y += p.speedY;
         p.x += p.speedX;
@@ -169,14 +173,13 @@ export const FloatingParticles: React.FC = () => {
 
         if (p.type === 'heart') {
           drawHeart(ctx, p.size, p.color);
+        } else if (p.type === 'flower') {
+          drawFlower(ctx, p.size, p.color);
         } else if (p.type === 'sparkle') {
           drawSparkle(ctx, p.size, p.color);
         } else if (p.type === 'paw') {
           drawPaw(ctx, p.size, p.color);
-        } else if (p.type === 'star') {
-          drawSparkle(ctx, p.size * 0.8, '#FFF');
         } else {
-          // Bubble / Sakura Petal
           ctx.fillStyle = p.color;
           ctx.beginPath();
           ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
@@ -186,7 +189,6 @@ export const FloatingParticles: React.FC = () => {
         ctx.restore();
       });
 
-      // Update & Render Cursor Sparkle & Paw Print Trail
       trailRef.current.forEach((t, index) => {
         t.opacity -= 0.02;
         t.size *= 0.96;
@@ -196,7 +198,9 @@ export const FloatingParticles: React.FC = () => {
           ctx.translate(t.x, t.y);
           ctx.globalAlpha = t.opacity;
 
-          if (t.type === 'heart') {
+          if (t.type === 'flower') {
+            drawFlower(ctx, t.size, t.color);
+          } else if (t.type === 'heart') {
             drawHeart(ctx, t.size, t.color);
           } else if (t.type === 'paw') {
             drawPaw(ctx, t.size, t.color);
@@ -220,12 +224,9 @@ export const FloatingParticles: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('click', handleClick);
     };
-  }, [state.isNightMode]);
+  }, [state.isNightMode, state.isGoldenHour]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-    />
+    <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />
   );
 };

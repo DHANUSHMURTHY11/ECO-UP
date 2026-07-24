@@ -1,29 +1,50 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { CatIllustration } from '../components/CatIllustration';
-import { Award, Sparkles, Heart, RefreshCw, Moon, Star, Camera } from 'lucide-react';
+import { Moon, Star, Heart, RefreshCw } from 'lucide-react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 import confetti from 'canvas-confetti';
+
+const typedLines = [
+  "Thank you...",
+  "For giving me a chance.",
+  "I genuinely can't wait to meet you.",
+  "See you soon ❤️",
+];
 
 export const SceneFinalGrand: React.FC = () => {
   const { dispatch, goToScene } = useApp();
   const { playCelebration, playPop } = useAudioEngine();
+  const [lineIndex, setLineIndex] = useState(0);
 
   useEffect(() => {
     dispatch({ type: 'SET_NIGHT_MODE', payload: true });
     playCelebration();
 
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
+      setLineIndex((prev) => {
+        if (prev >= typedLines.length - 1) {
+          clearInterval(interval);
+          return typedLines.length - 1;
+        }
+        return prev + 1;
+      });
+    }, 2800);
+
+    const confettiInterval = setInterval(() => {
       confetti({
-        particleCount: 30,
+        particleCount: 25,
         spread: 70,
         origin: { y: 0.3 },
         colors: ['#FDE047', '#C084FC', '#F472B6'],
       });
-    }, 2500);
+    }, 3000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(interval);
+      clearInterval(confettiInterval);
+    };
   }, [dispatch, playCelebration]);
 
   const handleRestart = () => {
@@ -47,54 +68,32 @@ export const SceneFinalGrand: React.FC = () => {
           <Star className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300 animate-spin" />
         </motion.div>
 
-        {/* Achievement Badge */}
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-          className="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 font-extrabold px-6 py-2.5 rounded-full shadow-2xl flex items-center gap-2 mb-6 border-2 border-white/80"
-        >
-          <Award className="w-6 h-6 text-slate-900" />
-          <span className="text-base sm:text-lg">First Date Unlocked 🏆</span>
-        </motion.div>
-
-        {/* Cats Watching Stars */}
+        {/* Cats Sitting Together Watching Fireflies */}
         <div className="relative mb-6">
-          <CatIllustration size={220} mood="purring" />
+          <CatIllustration size={230} mood="purring" showPair />
           <div className="absolute -top-3 -right-2 text-2xl animate-pulse">
             ✨🌙✨
           </div>
         </div>
 
-        {/* Cinematic Card */}
+        {/* Typed Story Card */}
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-slate-900/80 backdrop-blur-xl border border-slate-700/80 p-8 rounded-3xl shadow-2xl w-full mb-8 text-center"
+          className="bg-slate-900/80 backdrop-blur-xl border border-slate-700/80 p-8 rounded-3xl shadow-2xl w-full mb-8 text-center min-h-[160px] flex flex-col items-center justify-center"
         >
-          <p className="text-slate-300 font-serif italic text-base sm:text-lg mb-4">
-            "Every great story begins with a single 'Yes.'" ✨
-          </p>
-
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-pink-300 mb-2 font-heading">
-            Congratulations! 🎉
-          </h3>
-
-          <p className="text-slate-200 text-sm leading-relaxed mb-6 font-medium">
-            May it be filled with warm laughter, great conversations, and wonderful moments.
-          </p>
-
-          {/* Photo Frame Placeholder */}
-          <div className="p-4 rounded-2xl bg-slate-800/80 border border-dashed border-slate-600 flex flex-col items-center justify-center text-slate-400 gap-2 mb-4">
-            <Camera className="w-6 h-6 text-pink-400" />
-            <span className="text-xs font-semibold">First Date Photo Memory Frame 📸</span>
-          </div>
-
-          <div className="pt-2 border-t border-slate-800 flex items-center justify-center gap-2 text-pink-400 font-bold text-lg">
-            <span>See you soon</span>
-            <Heart className="w-5 h-5 fill-pink-400" />
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={lineIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.6 }}
+              className="text-xl sm:text-2xl font-extrabold text-pink-300 font-heading leading-relaxed"
+            >
+              {typedLines[lineIndex]}
+            </motion.p>
+          </AnimatePresence>
         </motion.div>
 
         {/* Replay Button */}
@@ -105,7 +104,7 @@ export const SceneFinalGrand: React.FC = () => {
           className="py-3.5 px-8 rounded-full bg-white/90 text-slate-900 font-extrabold text-sm shadow-xl hover:bg-white transition-all flex items-center gap-2 border border-white"
         >
           <RefreshCw className="w-4 h-4 text-pink-500" />
-          <span>Replay Experience</span>
+          <span>Replay Story</span>
         </motion.button>
       </div>
     </div>

@@ -15,6 +15,13 @@
     overflow-x: hidden;
   }
 
+  body.golden-hour {
+    background: linear-gradient(135deg, #FFEDD5 0%, #FDE68A 30%, #F472B6 70%, #FB7185 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #1F2937;
+  }
+
   body.night-mode {
     background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 40%, #311042 70%, #0F172A 100%);
     background-size: 400% 400%;
@@ -29,7 +36,6 @@
   100% { background-position: 0% 50%; }
 }
 
-/* Glassmorphism custom classes */
 .glass-panel {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px);
@@ -38,15 +44,6 @@
   box-shadow: 0 20px 40px rgba(220, 198, 255, 0.25);
 }
 
-.glass-panel-dark {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* Smooth Touch & Selection */
 * {
   -webkit-tap-highlight-color: transparent;
 }
