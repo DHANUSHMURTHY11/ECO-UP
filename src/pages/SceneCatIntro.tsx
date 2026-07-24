@@ -6,10 +6,21 @@ import { ArrowRight } from 'lucide-react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 
 const storySteps = [
-  { text: "Hiii!! 👋", mood: 'waving' as const },
-  { text: "I'm really happy you're here.", mood: 'happy' as const },
-  { text: "Can I steal just two minutes of your time?", mood: 'shy' as const },
-  { text: "I promise it'll be worth it. 🥹", mood: 'nervous' as const },
+  {
+    text: "I'm really happy that you are here 💕",
+    image: "./assets/story/intro_happy.png",
+    mood: 'waving' as const,
+  },
+  {
+    text: "Can I steal two minutes of your time?",
+    image: "./assets/story/intro_time.png",
+    mood: 'shy' as const,
+  },
+  {
+    text: "I promise it'll be worth it 🥹",
+    image: "./assets/story/intro_promise.jpg",
+    mood: 'nervous' as const,
+  },
 ];
 
 export const SceneCatIntro: React.FC = () => {
@@ -26,10 +37,12 @@ export const SceneCatIntro: React.FC = () => {
     }
   };
 
+  const step = storySteps[index];
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Animated Speech Bubble with Cute Hand-written Styling */}
+        {/* Animated Speech Bubble */}
         <div className="w-full mb-6 relative min-h-[110px] flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div
@@ -40,8 +53,8 @@ export const SceneCatIntro: React.FC = () => {
               transition={{ duration: 0.4, type: 'spring' }}
               className="bg-white/90 backdrop-blur-md border-2 border-pink-200 p-6 rounded-3xl shadow-xl text-center relative w-full"
             >
-              <p className="text-gray-800 text-xl sm:text-2xl font-bold font-heading leading-relaxed">
-                {storySteps[index].text}
+              <p className="text-gray-800 text-xl sm:text-2xl font-extrabold font-heading leading-relaxed">
+                {step.text}
               </p>
               <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[14px] border-t-white" />
             </motion.div>
@@ -49,17 +62,22 @@ export const SceneCatIntro: React.FC = () => {
         </div>
 
         {/* Story Cat Image Frame */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-6 w-64 h-64"
-        >
-          <CatIllustration
-            size={250}
-            imageSrc="./assets/story/story_intro.png"
-            mood={storySteps[index].mood}
-          />
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ y: 30, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-6 w-64 h-64"
+          >
+            <CatIllustration
+              size={250}
+              imageSrc={step.image}
+              mood={step.mood}
+            />
+          </motion.div>
+        </AnimatePresence>
 
         {/* Button */}
         <motion.button

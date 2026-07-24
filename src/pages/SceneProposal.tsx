@@ -28,7 +28,6 @@ export const SceneProposal: React.FC = () => {
   const handleDodgeNo = () => {
     playPop(350);
     if (dodgeCount < 8) {
-      // Teleport further away across screen bounds
       const maxDistX = Math.min(280, window.innerWidth * 0.35);
       const maxDistY = Math.min(180, window.innerHeight * 0.25);
       const randomX = (Math.random() - 0.5) * (maxDistX * 2);
@@ -73,13 +72,18 @@ export const SceneProposal: React.FC = () => {
           <Heart className="w-10 h-10 text-white fill-white" />
         </motion.div>
 
-        {/* Chibi Cat */}
-        <div className="mb-6">
+        {/* 4th Image Frame (Dog with Flower Crown) */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="mb-6 w-64 h-64"
+        >
           <CatIllustration
-            size={230}
+            size={250}
+            imageSrc="./assets/story/proposal_dog.jpg"
             mood={dodgeCount > 0 && dodgeCount < 8 ? 'nervous' : 'in_love'}
           />
-        </div>
+        </motion.div>
 
         {/* Proposal Title */}
         <motion.div

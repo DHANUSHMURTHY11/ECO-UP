@@ -25,14 +25,23 @@ export const SceneYesCelebration: React.FC = () => {
 
   useEffect(() => {
     playCelebration();
+    // Firework & Rocket burst loop
     const interval = setInterval(() => {
       confetti({
-        particleCount: 35,
+        particleCount: 50,
+        angle: 60,
         spread: 70,
-        origin: { y: 0.4 },
-        colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA'],
+        origin: { x: 0 },
+        colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
       });
-    }, 2000);
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 70,
+        origin: { x: 1 },
+        colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
+      });
+    }, 1200);
 
     return () => clearInterval(interval);
   }, [playCelebration]);
@@ -66,32 +75,37 @@ export const SceneYesCelebration: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Stage 1: Initial Celebration */}
+        {/* Stage 1: Initial Celebration with celebration 1.png & Fireworks */}
         {stage === 'celebration' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Rainbow Header */}
-            <div className="mb-4 text-4xl animate-bounce">
-              🌈✨🎉
-            </div>
-
+            {/* Celebration Image Frame */}
             <motion.div
-              animate={{ rotate: [-4, 4, -4], y: [-5, 5, -5] }}
-              transition={{ repeat: Infinity, duration: 1 }}
-              className="mb-6"
+              initial={{ scale: 0.8, rotate: -2 }}
+              animate={{ scale: 1, rotate: 0 }}
+              className="w-full h-64 sm:h-72 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-white"
             >
-              <CatIllustration size={230} mood="celebrating" showPair />
+              <img
+                src="./assets/celebration/celebration_video.png"
+                alt="Celebration!"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end justify-center p-4">
+                <span className="text-white font-extrabold text-2xl drop-shadow-md">
+                  YES! YAYYY! 🚀🎆🎉
+                </span>
+              </div>
             </motion.div>
 
-            <div className="bg-white/85 backdrop-blur-lg border border-white p-8 rounded-3xl shadow-2xl w-full mb-8">
-              <h2 className="text-3xl font-extrabold text-gray-800 mb-2">
-                YES! YAYYY! 🎉
-              </h2>
-              <p className="text-gray-600 text-base font-semibold">
+            <div className="bg-white/90 backdrop-blur-lg border-2 border-pink-200 p-6 rounded-3xl shadow-xl w-full mb-6 text-center">
+              <h2 className="text-2xl font-extrabold text-gray-800 mb-1 font-heading">
                 You just made my day! 💕
+              </h2>
+              <p className="text-xs text-pink-500 font-bold">
+                (Rockets & Fireworks exploding everywhere!)
               </p>
             </div>
 
@@ -179,7 +193,7 @@ export const SceneYesCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Stage 4: Post Signature Cute Reaction */}
+        {/* Stage 4: Post Signature Reaction */}
         {stage === 'post_signature' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, Sparkles, ArrowRight, ChevronLeft } from 'lucide-react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 
 const slides = [
@@ -13,7 +13,7 @@ const slides = [
   },
   {
     id: 2,
-    image: './assets/memories/slide2.png',
+    image: './assets/memories/hug_videoframe.png',
     caption: "I'd happily steal a hug like this someday. 🥹",
     subcaption: 'Warm cozy cuddles',
   },
@@ -31,9 +31,9 @@ const slides = [
   },
   {
     id: 5,
-    image: './assets/memories/slide5.png',
-    caption: 'One day... This could be us too. ✨',
-    subcaption: 'A cozy little world',
+    image: './assets/memories/titanic_cats.png',
+    caption: 'One day this could be us ✨',
+    subcaption: 'An epic love story...',
   },
 ];
 
@@ -47,7 +47,6 @@ export const SceneMemoriesGallery: React.FC = () => {
     if (index < slides.length - 1) {
       setIndex((prev) => prev + 1);
     } else {
-      // Transition to Golden Hour Proposal Scene!
       dispatch({ type: 'SET_GOLDEN_HOUR', payload: true });
       goToScene('PROPOSAL_QUESTION');
     }
@@ -65,17 +64,18 @@ export const SceneMemoriesGallery: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Header Badge */}
+        {/* Updated Header Badge: THIS COULD BE US !! */}
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4 flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-pink-100/90 text-pink-600 font-extrabold text-xs uppercase tracking-wider border border-pink-200 shadow-sm"
+          initial={{ opacity: 0, scale: 0.9, y: -15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="mb-4 flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-pink-500 text-white font-extrabold text-sm sm:text-base tracking-wide border-2 border-white shadow-lg animate-pulse"
         >
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span>Love Memories ({index + 1} / {slides.length})</span>
+          <Sparkles className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+          <span>THIS COULD BE US !! ✨</span>
+          <Heart className="w-4 h-4 fill-white" />
         </motion.div>
 
-        {/* Slide Image Card with Bokeh & Floating Glow */}
+        {/* Slide Image Card */}
         <div className="w-full relative mb-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -84,7 +84,7 @@ export const SceneMemoriesGallery: React.FC = () => {
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               exit={{ opacity: 0, scale: 1.05, rotate: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="bg-white/85 backdrop-blur-xl border-2 border-white p-4 sm:p-5 rounded-3xl shadow-2xl overflow-hidden relative"
+              className="bg-white/90 backdrop-blur-xl border-2 border-white p-4 sm:p-5 rounded-3xl shadow-2xl overflow-hidden relative"
             >
               {/* Image Frame */}
               <div className="w-full h-72 sm:h-80 rounded-2xl overflow-hidden relative shadow-inner bg-slate-100 flex items-center justify-center">
@@ -93,7 +93,6 @@ export const SceneMemoriesGallery: React.FC = () => {
                   alt={slide.caption}
                   className="w-full h-full object-cover rounded-2xl hover:scale-105 transition-transform duration-500"
                 />
-                {/* Floating Heart Overlay */}
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-md text-pink-500">
                   <Heart className="w-5 h-5 fill-pink-400 animate-pulse" />
                 </div>
@@ -101,10 +100,10 @@ export const SceneMemoriesGallery: React.FC = () => {
 
               {/* Caption */}
               <div className="pt-4 pb-2 px-2 text-center">
-                <h3 className="text-lg sm:text-xl font-extrabold text-gray-800 mb-1 leading-snug">
+                <h3 className="text-lg sm:text-xl font-extrabold text-gray-800 mb-1 leading-snug font-heading">
                   {slide.caption}
                 </h3>
-                <p className="text-xs text-pink-500 font-semibold italic">
+                <p className="text-xs text-pink-500 font-bold italic">
                   {slide.subcaption}
                 </p>
               </div>
@@ -132,12 +131,6 @@ export const SceneMemoriesGallery: React.FC = () => {
             <span>{index < slides.length - 1 ? 'Next Memory →' : 'One Tiny Question ✨'}</span>
             <ArrowRight className="w-5 h-5" />
           </motion.button>
-
-          {index < slides.length - 1 && (
-            <div className="w-10 h-10 flex items-center justify-center text-xs font-bold text-pink-500 bg-white/70 rounded-full border border-white">
-              {index + 1}
-            </div>
-          )}
         </div>
       </div>
     </div>
