@@ -15,9 +15,8 @@ const poemLines = [
   "Begin unexpectedly. ✨",
 ];
 
-// Easy 3-step initial puzzle state
 const solvedOrder = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-const initialScrambled = [0, 2, 1, 3, 4, 5, 6, 8, 7]; // Just 2 tile pairs swapped (super easy 3 taps!)
+const initialScrambled = [0, 2, 1, 3, 4, 5, 6, 8, 7];
 
 export const ScenePoemOne: React.FC = () => {
   const { goToScene } = useApp();
@@ -27,7 +26,6 @@ export const ScenePoemOne: React.FC = () => {
   const [isSolved, setIsSolved] = useState(false);
 
   useEffect(() => {
-    // Check if solved
     const match = tiles.every((val, idx) => val === solvedOrder[idx]);
     if (match && !isSolved) {
       setIsSolved(true);
@@ -48,7 +46,6 @@ export const ScenePoemOne: React.FC = () => {
     if (selectedIdx === null) {
       setSelectedIdx(index);
     } else {
-      // Swap selectedIdx and index
       const newTiles = [...tiles];
       const temp = newTiles[selectedIdx];
       newTiles[selectedIdx] = newTiles[index];
@@ -65,9 +62,9 @@ export const ScenePoemOne: React.FC = () => {
     setIsSolved(false);
   };
 
-  const handleNext = () => {
+  const handleNextToPromise = () => {
     playPop(650);
-    goToScene('MEMORIES_GALLERY');
+    goToScene('PROMISE_SECTION');
   };
 
   return (
@@ -127,7 +124,7 @@ export const ScenePoemOne: React.FC = () => {
             </button>
           </motion.div>
         ) : (
-          /* Unlocked Poem Glass Card */
+          /* Unlocked Poem Glass Card with Shining Line-by-Line Reveal */
           <AnimatePresence>
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -139,22 +136,23 @@ export const ScenePoemOne: React.FC = () => {
                 <span>Puzzle Solved! 🧩✨</span>
               </div>
 
-              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center gap-2 font-heading">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center justify-center gap-2 font-heading">
                 <span>A Little Poem</span>
-                <Sparkles className="w-4 h-4 text-pink-400" />
+                <Sparkles className="w-5 h-5 text-pink-400 animate-spin" />
               </h2>
 
-              <div className="space-y-3.5 mb-6">
+              {/* Shining Sequential Line Reveal */}
+              <div className="space-y-4 mb-6">
                 {poemLines.map((line, idx) => (
                   <motion.p
                     key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: idx * 0.15 }}
-                    className={`text-base sm:text-lg ${
+                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.8, delay: idx * 0.7 }}
+                    className={`text-lg sm:text-xl font-bold leading-relaxed ${
                       idx === 2 || idx === 3 || idx === 6
-                        ? 'font-bold text-pink-600'
-                        : 'text-gray-700 font-medium'
+                        ? 'bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 bg-clip-text text-transparent drop-shadow-sm'
+                        : 'text-gray-700'
                     }`}
                   >
                     {line}
@@ -163,15 +161,15 @@ export const ScenePoemOne: React.FC = () => {
               </div>
 
               <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: poemLines.length * 0.7 + 0.3 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleNext}
-                className="py-3.5 px-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-400 text-white font-extrabold text-base shadow-lg hover:shadow-pink-200 transition-all flex items-center justify-center gap-2 border border-white/40"
+                onClick={handleNextToPromise}
+                className="py-3.5 px-8 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 text-white font-extrabold text-base shadow-lg hover:shadow-pink-200 transition-all flex items-center justify-center gap-2 border border-white/40 animate-pulse"
               >
-                <span>THIS COULD BE US !! ✨ →</span>
+                <span>Read My Promises 💖 →</span>
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
             </motion.div>

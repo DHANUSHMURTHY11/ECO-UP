@@ -25,23 +25,23 @@ export const SceneYesCelebration: React.FC = () => {
 
   useEffect(() => {
     playCelebration();
-    // Firework & Rocket burst loop
+    // Continuous Rocket & Firecracker Confetti Explosion
     const interval = setInterval(() => {
       confetti({
-        particleCount: 50,
+        particleCount: 60,
         angle: 60,
-        spread: 70,
-        origin: { x: 0 },
+        spread: 80,
+        origin: { x: 0, y: 0.6 },
         colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
       });
       confetti({
-        particleCount: 50,
+        particleCount: 60,
         angle: 120,
-        spread: 70,
-        origin: { x: 1 },
+        spread: 80,
+        origin: { x: 1, y: 0.6 },
         colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
       });
-    }, 1200);
+    }, 1100);
 
     return () => clearInterval(interval);
   }, [playCelebration]);
@@ -82,19 +82,19 @@ export const SceneYesCelebration: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Celebration Image Frame */}
+            {/* Celebration Image Frame - Perfect object-contain Fit */}
             <motion.div
-              initial={{ scale: 0.8, rotate: -2 }}
+              initial={{ scale: 0.85, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="w-full h-64 sm:h-72 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-white"
+              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-900/90 flex items-center justify-center p-1"
             >
               <img
                 src="./assets/celebration/celebration_video.png"
                 alt="Celebration!"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain rounded-2xl"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end justify-center p-4">
-                <span className="text-white font-extrabold text-2xl drop-shadow-md">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end justify-center p-3 pointer-events-none">
+                <span className="text-white font-extrabold text-2xl drop-shadow-lg font-heading">
                   YES! YAYYY! 🚀🎆🎉
                 </span>
               </div>

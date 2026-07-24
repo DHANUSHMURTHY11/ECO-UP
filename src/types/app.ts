@@ -4,7 +4,7 @@ export type SceneType =
   | 'FLOWER_GIFT'
   | 'HEART_CONNECTION'
   | 'POEM_ONE'
-  | 'FLOWER_DRAG'
+  | 'PROMISE_SECTION'
   | 'MEMORIES_GALLERY'
   | 'PROPOSAL_QUESTION'
   | 'NO_GRACEFUL'
@@ -26,13 +26,6 @@ export type CatMood =
   | 'kisses'
   | 'purring'
   | 'waving';
-
-export interface MemorySlide {
-  id: number;
-  image: string;
-  caption: string;
-  subcaption?: string;
-}
 
 export interface AppState {
   currentScene: SceneType;

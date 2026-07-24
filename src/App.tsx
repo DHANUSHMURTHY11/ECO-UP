@@ -9,6 +9,7 @@ import { SceneCatIntro } from './pages/SceneCatIntro';
 import { SceneFlowerGift } from './pages/SceneFlowerGift';
 import { SceneHeartConnection } from './pages/SceneHeartConnection';
 import { ScenePoemOne } from './pages/ScenePoemOne';
+import { ScenePromise } from './pages/ScenePromise';
 import { SceneMemoriesGallery } from './pages/SceneMemoriesGallery';
 import { SceneProposal } from './pages/SceneProposal';
 import { SceneNoGraceful } from './pages/SceneNoGraceful';
@@ -43,6 +44,8 @@ export const AppContent: React.FC = () => {
         return <SceneHeartConnection key="heart_connection" />;
       case 'POEM_ONE':
         return <ScenePoemOne key="poem_one" />;
+      case 'PROMISE_SECTION':
+        return <ScenePromise key="promise_section" />;
       case 'MEMORIES_GALLERY':
         return <SceneMemoriesGallery key="memories_gallery" />;
       case 'PROPOSAL_QUESTION':
