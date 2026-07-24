@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { CatIllustration } from '../components/CatIllustration';
@@ -22,10 +22,10 @@ export const SceneYesCelebration: React.FC = () => {
   const { playCelebration, playCarHonk, playStamp, playPop } = useAudioEngine();
   const [stage, setStage] = useState<'celebration' | 'truck' | 'contract' | 'post_signature'>('celebration');
   const [isSigned, setIsSigned] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     playCelebration();
-    // Continuous Rocket & Firecracker Confetti Explosion
     const interval = setInterval(() => {
       confetti({
         particleCount: 60,
@@ -75,14 +75,14 @@ export const SceneYesCelebration: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Stage 1: Initial Celebration with celebration 1.png & Fireworks */}
+        {/* Stage 1: Initial Celebration with Video / Image & Rocket Explosions */}
         {stage === 'celebration' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Celebration Image Frame - Perfect object-contain Fit */}
+            {/* Responsive Celebration Video / Image Frame */}
             <motion.div
               initial={{ scale: 0.85, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -193,23 +193,38 @@ export const SceneYesCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Stage 4: Post Signature Reaction */}
+        {/* Stage 4: Post Signature Reaction with Rooftop Couple Photo */}
         {stage === 'post_signature' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            <div className="bg-white/85 backdrop-blur-lg border border-white p-6 rounded-3xl shadow-2xl w-full mb-6">
-              <h3 className="text-2xl font-extrabold text-gray-800 mb-2">
-                It's official! 😭💖
-              </h3>
-              <p className="text-gray-600 text-sm font-semibold">
+            {/* Rooftop Couple Photo (Andrew & Emma) */}
+            <motion.div
+              initial={{ scale: 0.9, rotate: -1 }}
+              animate={{ scale: 1, rotate: 0 }}
+              className="w-full h-80 sm:h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-900"
+            >
+              <img
+                src="./assets/story/official_couple.png"
+                alt="It's Official!"
+                className="w-full h-full object-cover rounded-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center p-4">
+                <span className="text-white font-extrabold text-2xl drop-shadow-lg font-heading">
+                  It's Official! 😭💖
+                </span>
+              </div>
+            </motion.div>
+
+            <div className="bg-white/85 backdrop-blur-lg border border-white p-6 rounded-3xl shadow-2xl w-full mb-6 text-center">
+              <p className="text-gray-700 text-sm font-semibold">
                 *Cat reads signature, eyes get huge, runs around celebrating with all cat friends!* 🐾🎉
               </p>
             </div>
 
-            <CatIllustration size={230} mood="kisses" showPair />
+            <CatIllustration size={200} mood="kisses" showPair />
 
             <motion.button
               whileHover={{ scale: 1.05 }}

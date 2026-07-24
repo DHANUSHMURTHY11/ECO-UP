@@ -64,11 +64,12 @@ export const SceneMemoriesGallery: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Updated Header Badge: THIS COULD BE US !! */}
+        {/* Animated Title: Big Fullscreen Center for 3s, then Animates to Top */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: -15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="mb-4 flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-pink-500 text-white font-extrabold text-sm sm:text-base tracking-wide border-2 border-white shadow-lg animate-pulse"
+          initial={{ scale: 2.2, y: 140, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-4 flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-pink-500 text-white font-extrabold text-sm sm:text-base tracking-wide border-2 border-white shadow-2xl z-30"
         >
           <Sparkles className="w-5 h-5 text-yellow-300 fill-yellow-300" />
           <span>THIS COULD BE US !! ✨</span>
@@ -76,7 +77,12 @@ export const SceneMemoriesGallery: React.FC = () => {
         </motion.div>
 
         {/* Slide Image Card */}
-        <div className="w-full relative mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="w-full relative mb-6"
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
@@ -109,10 +115,15 @@ export const SceneMemoriesGallery: React.FC = () => {
               </div>
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* Slide Navigation Controls */}
-        <div className="flex items-center justify-between w-full gap-3">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="flex items-center justify-between w-full gap-3"
+        >
           <button
             onClick={handlePrevSlide}
             disabled={index === 0}
@@ -131,7 +142,7 @@ export const SceneMemoriesGallery: React.FC = () => {
             <span>{index < slides.length - 1 ? 'Next Memory →' : 'One Tiny Question ✨'}</span>
             <ArrowRight className="w-5 h-5" />
           </motion.button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

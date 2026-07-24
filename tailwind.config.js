@@ -18,15 +18,11 @@ export default {
           purple: '#9B5DE5',
           gold: '#FFD166',
         },
-        glass: {
-          white: 'rgba(255, 255, 255, 0.75)',
-          border: 'rgba(255, 255, 255, 0.5)',
-          shadow: 'rgba(220, 198, 255, 0.3)',
-        }
       },
       fontFamily: {
         sans: ['"Fredoka"', '"Quicksand"', 'sans-serif'],
-        handwriting: ['"Pacifico"', 'cursive'],
+        handwriting: ['"Caveat"', '"Dancing Script"', '"Shadows Into Light"', 'cursive'],
+        kalam: ['"Kalam"', 'cursive'],
         heading: ['"Fredoka"', 'sans-serif'],
       },
       animation: {
