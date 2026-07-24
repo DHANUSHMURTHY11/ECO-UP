@@ -25,11 +25,11 @@ export const ScenePromise: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [isTitleCentered, setIsTitleCentered] = useState(true);
 
-  // Stay centered & big for 3 seconds
+  // Fast 2-second centered animation
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTitleCentered(false);
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -55,14 +55,14 @@ export const ScenePromise: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Animated Title: Big Fullscreen Center for 3 seconds */}
+        {/* Animated Title: Fast 2 seconds centered animation */}
         <motion.div
           animate={
             isTitleCentered
-              ? { scale: [1.8, 2.2, 1.8], y: 160, opacity: 1 }
+              ? { scale: [1.6, 2, 1.6], y: 150, opacity: 1 }
               : { scale: 1, y: 0, opacity: 1 }
           }
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-6 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 text-white font-extrabold text-xl sm:text-2xl tracking-wide border-4 border-white shadow-2xl z-50 cursor-pointer"
           onClick={() => setIsTitleCentered(false)}
         >
@@ -74,8 +74,8 @@ export const ScenePromise: React.FC = () => {
         {/* Promise Image Card - Clean Without Text Below */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isTitleCentered ? 0.4 : 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          animate={{ opacity: isTitleCentered ? 0.3 : 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           className="w-full relative mb-6"
         >
           <AnimatePresence mode="wait">

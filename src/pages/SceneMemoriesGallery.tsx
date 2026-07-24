@@ -43,11 +43,11 @@ export const SceneMemoriesGallery: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [isTitleCentered, setIsTitleCentered] = useState(true);
 
-  // Stay centered & big for 3 seconds
+  // Fast 2-second centered animation
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTitleCentered(false);
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -74,14 +74,14 @@ export const SceneMemoriesGallery: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Animated Title: Big Center for 3 Seconds */}
+        {/* Animated Title: Fast 2 seconds centered animation */}
         <motion.div
           animate={
             isTitleCentered
-              ? { scale: [1.8, 2.2, 1.8], y: 160, opacity: 1 }
+              ? { scale: [1.6, 2, 1.6], y: 150, opacity: 1 }
               : { scale: 1, y: 0, opacity: 1 }
           }
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-6 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-pink-500 text-white font-extrabold text-lg sm:text-xl tracking-wide border-4 border-white shadow-2xl z-50 cursor-pointer"
           onClick={() => setIsTitleCentered(false)}
         >
@@ -93,7 +93,7 @@ export const SceneMemoriesGallery: React.FC = () => {
         {/* Slide Image Card */}
         <motion.div
           animate={{ opacity: isTitleCentered ? 0.35 : 1 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="w-full relative mb-6"
         >
           <AnimatePresence mode="wait">

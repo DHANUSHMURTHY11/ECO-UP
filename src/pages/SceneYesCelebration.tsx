@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { DeliveryCarSVG } from '../components/DeliveryCarSVG';
 import { SignaturePad } from '../components/SignaturePad';
-import { Sparkles, Heart, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 import confetti from 'canvas-confetti';
+import officialCoupleImg from '../assets/official_couple.png';
 
 const terms = [
   "Go on one fun date.",
@@ -114,7 +115,7 @@ export const SceneYesCelebration: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Clean Box: Just Keep "You just made my day! 💕" */}
+            {/* Clean Text Box: Only You Just Made My Day! */}
             <div className="bg-white/90 backdrop-blur-lg border-2 border-pink-200 p-6 rounded-3xl shadow-xl w-full mb-6 text-center">
               <h2 className="text-2xl font-extrabold text-gray-800 font-heading">
                 You just made my day! 💕
@@ -205,7 +206,7 @@ export const SceneYesCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Stage 4: Post Signature Section (Top Image with Header + Compact Video Below) */}
+        {/* Stage 4: Post Signature Section (Top Image with Header + Half-size Video Below) */}
         {stage === 'post_signature' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -216,14 +217,14 @@ export const SceneYesCelebration: React.FC = () => {
             <motion.div
               initial={{ scale: 0.9, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-4 relative bg-slate-900"
+              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-3 relative bg-slate-900"
             >
               <img
-                src="./assets/story/official_couple.png"
+                src={officialCoupleImg || './assets/story/official_couple.png'}
                 alt="It's Official!"
                 className="w-full h-full object-cover rounded-2xl"
               />
-              <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/70 via-black/20 to-transparent p-4 flex items-center justify-center">
+              <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/75 via-black/30 to-transparent p-4 flex items-center justify-center">
                 <span className="text-white font-extrabold text-2xl sm:text-3xl drop-shadow-xl font-heading tracking-wide flex items-center gap-2">
                   <span>It's Official! 😭💖</span>
                   <Sparkles className="w-6 h-6 text-yellow-300 animate-spin" />
@@ -231,12 +232,12 @@ export const SceneYesCelebration: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Compact Video Frame (official.mp4) Positioned Below Top Image */}
+            {/* Half-size Video Frame (official.mp4) Positioned Below Top Image */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="w-full h-40 sm:h-48 rounded-2xl overflow-hidden shadow-xl border-2 border-white mb-6 bg-slate-950 relative flex items-center justify-center p-1"
+              className="w-full h-36 sm:h-40 rounded-2xl overflow-hidden shadow-xl border-2 border-white mb-6 bg-slate-950 relative flex items-center justify-center p-1"
             >
               <video
                 ref={officialVideoRef}
