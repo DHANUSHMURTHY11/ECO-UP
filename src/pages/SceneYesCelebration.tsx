@@ -22,22 +22,25 @@ export const SceneYesCelebration: React.FC = () => {
   const { playCelebration, playCarHonk, playStamp, playPop } = useAudioEngine();
   const [stage, setStage] = useState<'celebration' | 'truck' | 'contract' | 'post_signature'>('celebration');
   const [isSigned, setIsSigned] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const celebVideoRef = useRef<HTMLVideoElement | null>(null);
+  const officialVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     playCelebration();
+    // Continuous Rocket & Firecracker Confetti Explosions
     const interval = setInterval(() => {
       confetti({
-        particleCount: 60,
+        particleCount: 65,
         angle: 60,
-        spread: 80,
+        spread: 85,
         origin: { x: 0, y: 0.6 },
         colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
       });
       confetti({
-        particleCount: 60,
+        particleCount: 65,
         angle: 120,
-        spread: 80,
+        spread: 85,
         origin: { x: 1, y: 0.6 },
         colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#60A5FA', '#F472B6'],
       });
@@ -45,6 +48,15 @@ export const SceneYesCelebration: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [playCelebration]);
+
+  // Ensure video autoplay works cleanly
+  useEffect(() => {
+    if (stage === 'celebration' && celebVideoRef.current) {
+      celebVideoRef.current.play().catch(() => {});
+    } else if (stage === 'post_signature' && officialVideoRef.current) {
+      officialVideoRef.current.play().catch(() => {});
+    }
+  }, [stage]);
 
   const handleTruckArrival = () => {
     playCarHonk();
@@ -75,23 +87,28 @@ export const SceneYesCelebration: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Stage 1: Initial Celebration with Video / Image & Rocket Explosions */}
+        {/* Stage 1: Celebration with celebration.mp4 Video & Rocket Explosions */}
         {stage === 'celebration' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Responsive Celebration Video / Image Frame */}
+            {/* Celebration Video Frame */}
             <motion.div
               initial={{ scale: 0.85, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-900/90 flex items-center justify-center p-1"
+              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-950 flex items-center justify-center p-1"
             >
-              <img
-                src="./assets/celebration/celebration_video.png"
-                alt="Celebration!"
-                className="w-full h-full object-contain rounded-2xl"
+              <video
+                ref={celebVideoRef}
+                src="./assets/video/celebration.mp4"
+                autoPlay
+                muted
+                playsInline
+                loop
+                preload="auto"
+                className="w-full h-full object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end justify-center p-3 pointer-events-none">
                 <span className="text-white font-extrabold text-2xl drop-shadow-lg font-heading">
@@ -193,44 +210,47 @@ export const SceneYesCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Stage 4: Post Signature Reaction with Rooftop Couple Photo */}
+        {/* Stage 4: Post Signature Section with official.mp4 Video */}
         {stage === 'post_signature' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Rooftop Couple Photo (Andrew & Emma) */}
+            {/* Official Video Frame (official.mp4) */}
             <motion.div
               initial={{ scale: 0.9, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="w-full h-80 sm:h-96 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-900"
+              className="w-full h-80 sm:h-[400px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-950 flex items-center justify-center p-1"
             >
-              <img
-                src="./assets/story/official_couple.png"
-                alt="It's Official!"
+              <video
+                ref={officialVideoRef}
+                src="./assets/video/official.mp4"
+                autoPlay
+                muted
+                playsInline
+                loop
+                preload="auto"
                 className="w-full h-full object-cover rounded-2xl"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center p-4">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center p-4 pointer-events-none">
                 <span className="text-white font-extrabold text-2xl drop-shadow-lg font-heading">
                   It's Official! 😭💖
                 </span>
               </div>
             </motion.div>
 
-            <div className="bg-white/85 backdrop-blur-lg border border-white p-6 rounded-3xl shadow-2xl w-full mb-6 text-center">
+            <div className="bg-white/85 backdrop-blur-lg border border-white p-5 rounded-3xl shadow-2xl w-full mb-6 text-center">
               <p className="text-gray-700 text-sm font-semibold">
                 *Cat reads signature, eyes get huge, runs around celebrating with all cat friends!* 🐾🎉
               </p>
             </div>
 
-            <CatIllustration size={200} mood="kisses" showPair />
-
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleFinishStory}
-              className="mt-6 py-4 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-base shadow-xl transition-all flex items-center gap-2 border border-white/50 animate-pulse"
+              className="mt-4 py-4 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-base shadow-xl transition-all flex items-center gap-2 border border-white/50 animate-pulse"
             >
               <span>Watch Starry Finale 🌙</span>
               <ArrowRight className="w-5 h-5" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { Heart, Sparkles, ArrowRight, ChevronLeft } from 'lucide-react';
@@ -41,6 +41,16 @@ export const SceneMemoriesGallery: React.FC = () => {
   const { dispatch, goToScene } = useApp();
   const { playPop } = useAudioEngine();
   const [index, setIndex] = useState(0);
+  const [isTitleCentered, setIsTitleCentered] = useState(true);
+
+  // Stay centered & big for 8 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTitleCentered(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleNextSlide = () => {
     playPop(650);
@@ -64,23 +74,26 @@ export const SceneMemoriesGallery: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Animated Title: Big Fullscreen Center for 3s, then Animates to Top */}
+        {/* Animated Title: Big Center for 8 Seconds */}
         <motion.div
-          initial={{ scale: 2.2, y: 140, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-4 flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-pink-500 text-white font-extrabold text-sm sm:text-base tracking-wide border-2 border-white shadow-2xl z-30"
+          animate={
+            isTitleCentered
+              ? { scale: [1.8, 2.2, 1.8], y: 160, opacity: 1 }
+              : { scale: 1, y: 0, opacity: 1 }
+          }
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-6 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-pink-500 text-white font-extrabold text-lg sm:text-xl tracking-wide border-4 border-white shadow-2xl z-50 cursor-pointer"
+          onClick={() => setIsTitleCentered(false)}
         >
-          <Sparkles className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+          <Sparkles className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-spin" />
           <span>THIS COULD BE US !! ✨</span>
-          <Heart className="w-4 h-4 fill-white" />
+          <Heart className="w-5 h-5 fill-white animate-pulse" />
         </motion.div>
 
         {/* Slide Image Card */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+          animate={{ opacity: isTitleCentered ? 0.35 : 1 }}
+          transition={{ duration: 0.6 }}
           className="w-full relative mb-6"
         >
           <AnimatePresence mode="wait">
@@ -119,9 +132,7 @@ export const SceneMemoriesGallery: React.FC = () => {
 
         {/* Slide Navigation Controls */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          animate={{ opacity: isTitleCentered ? 0.3 : 1 }}
           className="flex items-center justify-between w-full gap-3"
         >
           <button

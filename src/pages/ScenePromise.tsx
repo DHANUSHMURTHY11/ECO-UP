@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { Heart, Sparkles, ArrowRight, ChevronLeft } from 'lucide-react';
@@ -8,20 +8,14 @@ const promises = [
   {
     id: 1,
     image: './assets/promises/promise1.jpg',
-    caption: 'In a room full of people...',
-    text: "I'd look for you so we can leave. ❤️",
   },
   {
     id: 2,
     image: './assets/promises/promise2.jpg',
-    caption: 'Because you are the party...',
-    text: "Everything else is just noise I tolerate until we're alone. ✨",
   },
   {
     id: 3,
     image: './assets/promises/promise3.png',
-    caption: 'And then one look from you...',
-    text: 'Across the room that says everything. 🥹💖',
   },
 ];
 
@@ -29,6 +23,16 @@ export const ScenePromise: React.FC = () => {
   const { goToScene } = useApp();
   const { playPop } = useAudioEngine();
   const [index, setIndex] = useState(0);
+  const [isTitleCentered, setIsTitleCentered] = useState(true);
+
+  // Stay centered & big for 8 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTitleCentered(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleNext = () => {
     playPop(650);
@@ -51,23 +55,27 @@ export const ScenePromise: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Animated Title: Starts Big Fullscreen Center, Animates Small to Top */}
+        {/* Animated Title: Big Fullscreen Center for 8 seconds */}
         <motion.div
-          initial={{ scale: 2.2, y: 140, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
+          animate={
+            isTitleCentered
+              ? { scale: [1.8, 2.2, 1.8], y: 160, opacity: 1 }
+              : { scale: 1, y: 0, opacity: 1 }
+          }
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-4 flex items-center justify-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-extrabold text-lg sm:text-xl tracking-wide border-2 border-white shadow-2xl z-30"
+          className="mb-6 flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 text-white font-extrabold text-xl sm:text-2xl tracking-wide border-4 border-white shadow-2xl z-50 cursor-pointer"
+          onClick={() => setIsTitleCentered(false)}
         >
-          <Sparkles className="w-5 h-5 text-amber-300 fill-amber-300" />
+          <Sparkles className="w-6 h-6 text-amber-300 fill-amber-300 animate-spin" />
           <span>I PROMISE ! 💖</span>
-          <Heart className="w-5 h-5 fill-white" />
+          <Heart className="w-6 h-6 fill-white animate-pulse" />
         </motion.div>
 
-        {/* Promise Image Card */}
+        {/* Promise Image Card - Clean Without Text Below */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          animate={{ opacity: isTitleCentered ? 0.4 : 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           className="w-full relative mb-6"
         >
           <AnimatePresence mode="wait">
@@ -77,25 +85,15 @@ export const ScenePromise: React.FC = () => {
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               exit={{ opacity: 0, scale: 1.05, rotate: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="bg-white/90 backdrop-blur-xl border-2 border-pink-200 p-4 sm:p-5 rounded-3xl shadow-2xl overflow-hidden relative"
+              className="bg-white/90 backdrop-blur-xl border-2 border-pink-200 p-3 sm:p-4 rounded-3xl shadow-2xl overflow-hidden relative"
             >
-              {/* Image Frame */}
-              <div className="w-full h-80 sm:h-96 rounded-2xl overflow-hidden relative shadow-inner bg-slate-900 flex items-center justify-center">
+              {/* Clean Image Frame */}
+              <div className="w-full h-80 sm:h-[420px] rounded-2xl overflow-hidden relative shadow-inner bg-slate-900 flex items-center justify-center">
                 <img
                   src={item.image}
-                  alt={item.caption}
+                  alt="Promise"
                   className="w-full h-full object-contain rounded-2xl hover:scale-105 transition-transform duration-500"
                 />
-              </div>
-
-              {/* Caption */}
-              <div className="pt-4 pb-2 px-2 text-center">
-                <p className="text-xs text-pink-500 font-extrabold uppercase tracking-wider mb-1">
-                  {item.caption}
-                </p>
-                <h3 className="text-lg sm:text-xl font-extrabold text-gray-800 leading-snug font-heading">
-                  {item.text}
-                </h3>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -103,9 +101,7 @@ export const ScenePromise: React.FC = () => {
 
         {/* Navigation Controls */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          animate={{ opacity: isTitleCentered ? 0.3 : 1 }}
           className="flex items-center justify-between w-full gap-3"
         >
           <button
