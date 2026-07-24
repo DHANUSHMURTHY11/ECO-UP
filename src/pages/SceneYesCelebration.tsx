@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { CatIllustration } from '../components/CatIllustration';
 import { DeliveryCarSVG } from '../components/DeliveryCarSVG';
 import { SignaturePad } from '../components/SignaturePad';
 import { Sparkles, Heart, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -18,7 +17,7 @@ const terms = [
 ];
 
 export const SceneYesCelebration: React.FC = () => {
-  const { state, dispatch, goToScene } = useApp();
+  const { dispatch, goToScene } = useApp();
   const { playCelebration, playCarHonk, playStamp, playPop } = useAudioEngine();
   const [stage, setStage] = useState<'celebration' | 'truck' | 'contract' | 'post_signature'>('celebration');
   const [isSigned, setIsSigned] = useState(false);
@@ -28,7 +27,6 @@ export const SceneYesCelebration: React.FC = () => {
 
   useEffect(() => {
     playCelebration();
-    // Continuous Rocket & Firecracker Confetti Explosions
     const interval = setInterval(() => {
       confetti({
         particleCount: 65,
@@ -49,7 +47,6 @@ export const SceneYesCelebration: React.FC = () => {
     return () => clearInterval(interval);
   }, [playCelebration]);
 
-  // Ensure video autoplay works cleanly
   useEffect(() => {
     if (stage === 'celebration' && celebVideoRef.current) {
       celebVideoRef.current.play().catch(() => {});
@@ -87,7 +84,7 @@ export const SceneYesCelebration: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative z-10 select-none">
       <div className="max-w-md w-full flex flex-col items-center text-center">
-        {/* Stage 1: Celebration with celebration.mp4 Video & Rocket Explosions */}
+        {/* Stage 1: Celebration with celebration.mp4 Video */}
         {stage === 'celebration' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -117,13 +114,11 @@ export const SceneYesCelebration: React.FC = () => {
               </div>
             </motion.div>
 
+            {/* Clean Box: Just Keep "You just made my day! 💕" */}
             <div className="bg-white/90 backdrop-blur-lg border-2 border-pink-200 p-6 rounded-3xl shadow-xl w-full mb-6 text-center">
-              <h2 className="text-2xl font-extrabold text-gray-800 mb-1 font-heading">
+              <h2 className="text-2xl font-extrabold text-gray-800 font-heading">
                 You just made my day! 💕
               </h2>
-              <p className="text-xs text-pink-500 font-bold">
-                (Rockets & Fireworks exploding everywhere!)
-              </p>
             </div>
 
             <motion.button
@@ -210,18 +205,38 @@ export const SceneYesCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Stage 4: Post Signature Section with official.mp4 Video */}
+        {/* Stage 4: Post Signature Section (Top Image with Header + Compact Video Below) */}
         {stage === 'post_signature' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full flex flex-col items-center"
           >
-            {/* Official Video Frame (official.mp4) */}
+            {/* Top Image (Rooftop Couple) with Header Badge Over It */}
             <motion.div
               initial={{ scale: 0.9, rotate: -1 }}
               animate={{ scale: 1, rotate: 0 }}
-              className="w-full h-80 sm:h-[400px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-6 relative bg-slate-950 flex items-center justify-center p-1"
+              className="w-full h-72 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-4 relative bg-slate-900"
+            >
+              <img
+                src="./assets/story/official_couple.png"
+                alt="It's Official!"
+                className="w-full h-full object-cover rounded-2xl"
+              />
+              <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/70 via-black/20 to-transparent p-4 flex items-center justify-center">
+                <span className="text-white font-extrabold text-2xl sm:text-3xl drop-shadow-xl font-heading tracking-wide flex items-center gap-2">
+                  <span>It's Official! 😭💖</span>
+                  <Sparkles className="w-6 h-6 text-yellow-300 animate-spin" />
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Compact Video Frame (official.mp4) Positioned Below Top Image */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="w-full h-40 sm:h-48 rounded-2xl overflow-hidden shadow-xl border-2 border-white mb-6 bg-slate-950 relative flex items-center justify-center p-1"
             >
               <video
                 ref={officialVideoRef}
@@ -231,26 +246,15 @@ export const SceneYesCelebration: React.FC = () => {
                 playsInline
                 loop
                 preload="auto"
-                className="w-full h-full object-cover rounded-2xl"
+                className="w-full h-full object-cover rounded-xl"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center p-4 pointer-events-none">
-                <span className="text-white font-extrabold text-2xl drop-shadow-lg font-heading">
-                  It's Official! 😭💖
-                </span>
-              </div>
             </motion.div>
-
-            <div className="bg-white/85 backdrop-blur-lg border border-white p-5 rounded-3xl shadow-2xl w-full mb-6 text-center">
-              <p className="text-gray-700 text-sm font-semibold">
-                *Cat reads signature, eyes get huge, runs around celebrating with all cat friends!* 🐾🎉
-              </p>
-            </div>
 
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleFinishStory}
-              className="mt-4 py-4 px-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-base shadow-xl transition-all flex items-center gap-2 border border-white/50 animate-pulse"
+              className="py-4 px-9 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-base shadow-xl transition-all flex items-center gap-2 border border-white/50 animate-pulse"
             >
               <span>Watch Starry Finale 🌙</span>
               <ArrowRight className="w-5 h-5" />
