@@ -9,8 +9,13 @@ import confetti from 'canvas-confetti';
 const noButtonPrompts = [
   "No 🙈",
   "Are you sure? 🥺",
-  "The cat will be sad 😿",
-  "Maybe think once more? ❤️",
+  "The cat will cry 😿",
+  "Think once more! ❤️",
+  "Catch me if you can! 🐾",
+  "Wait, don't press no! 🙈",
+  "Pretty please? 🥺",
+  "Are you really super sure? 🥺",
+  "Okay, if you really mean it... ❤️",
   "No 🙈",
 ];
 
@@ -22,9 +27,12 @@ export const SceneProposal: React.FC = () => {
 
   const handleDodgeNo = () => {
     playPop(350);
-    if (dodgeCount < 3) {
-      const randomX = (Math.random() - 0.5) * 160;
-      const randomY = (Math.random() - 0.5) * 100;
+    if (dodgeCount < 8) {
+      // Teleport further away across screen bounds
+      const maxDistX = Math.min(280, window.innerWidth * 0.35);
+      const maxDistY = Math.min(180, window.innerHeight * 0.25);
+      const randomX = (Math.random() - 0.5) * (maxDistX * 2);
+      const randomY = (Math.random() - 0.5) * (maxDistY * 2);
       setNoPosition({ x: randomX, y: randomY });
       setDodgeCount((prev) => prev + 1);
       dispatch({ type: 'INCREMENT_NO_DODGE' });
@@ -42,8 +50,8 @@ export const SceneProposal: React.FC = () => {
     dispatch({ type: 'SET_PROPOSAL_RESULT', payload: 'accepted' });
 
     confetti({
-      particleCount: 140,
-      spread: 80,
+      particleCount: 160,
+      spread: 90,
       origin: { y: 0.5 },
       colors: ['#FF85A1', '#FFD166', '#DCC6FF', '#F472B6'],
     });
@@ -68,8 +76,8 @@ export const SceneProposal: React.FC = () => {
         {/* Chibi Cat */}
         <div className="mb-6">
           <CatIllustration
-            size={220}
-            mood={dodgeCount > 0 && dodgeCount < 4 ? 'nervous' : 'in_love'}
+            size={230}
+            mood={dodgeCount > 0 && dodgeCount < 8 ? 'nervous' : 'in_love'}
           />
         </div>
 
@@ -77,12 +85,12 @@ export const SceneProposal: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/85 backdrop-blur-lg border border-white p-6 sm:p-8 rounded-3xl shadow-2xl w-full mb-8"
+          className="bg-white/90 backdrop-blur-lg border-2 border-amber-200 p-6 sm:p-8 rounded-3xl shadow-2xl w-full mb-8"
         >
-          <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">
+          <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-2 font-heading">
             There's just one tiny question...
           </p>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 leading-snug">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 leading-snug font-heading">
             Would you like to go on a date with me? ❤️
           </h2>
           <p className="text-sm text-gray-600 mt-2 font-medium">
@@ -97,19 +105,19 @@ export const SceneProposal: React.FC = () => {
             whileHover={{ scale: 1.1, rotate: [-1, 1, -1] }}
             whileTap={{ scale: 0.95 }}
             onClick={handleYesClick}
-            className="py-4 px-10 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white font-extrabold text-lg shadow-xl hover:shadow-rose-300 transition-all border border-white/50 animate-pulse flex items-center gap-2"
+            className="py-4 px-10 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white font-extrabold text-lg shadow-xl hover:shadow-rose-300 transition-all border border-white/50 animate-pulse flex items-center gap-2 z-20"
           >
             <span>YES ❤️</span>
           </motion.button>
 
-          {/* Playful Evasion NO Button */}
-          {dodgeCount < 3 ? (
+          {/* Extended Evasion NO Button */}
+          {dodgeCount < 8 ? (
             <motion.button
               onMouseEnter={handleDodgeNo}
               onClick={handleDodgeNo}
-              animate={{ x: noPosition.x, y: noPosition.y, scale: Math.max(0.7, 1 - dodgeCount * 0.1) }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="py-3.5 px-6 rounded-full bg-gray-100 text-gray-700 font-semibold text-base shadow-md border border-gray-200 hover:bg-gray-200 transition-colors"
+              animate={{ x: noPosition.x, y: noPosition.y }}
+              transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+              className="py-3.5 px-6 rounded-full bg-gray-100/90 text-gray-700 font-bold text-base shadow-lg border-2 border-gray-200 hover:bg-gray-200 transition-colors z-20"
             >
               {noLabel}
             </motion.button>
@@ -120,7 +128,7 @@ export const SceneProposal: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleNoClick}
-              className="py-3.5 px-6 rounded-full bg-gray-200 text-gray-700 font-medium text-sm shadow-sm hover:bg-gray-300 transition-all flex items-center gap-1.5"
+              className="py-3.5 px-6 rounded-full bg-gray-200 text-gray-700 font-medium text-sm shadow-sm hover:bg-gray-300 transition-all flex items-center gap-1.5 z-20"
             >
               <Frown className="w-4 h-4 text-gray-500" />
               <span>No 🙈</span>
