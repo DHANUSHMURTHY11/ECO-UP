@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useApp } from './context/AppContext';
 import { FloatingParticles } from './components/FloatingParticles';
 import { NavigationHeader } from './components/NavigationHeader';
+import { BackgroundMusicPlayer } from './components/BackgroundMusicPlayer';
 
 import { SceneLoading } from './pages/SceneLoading';
 import { SceneCatIntro } from './pages/SceneCatIntro';
@@ -65,6 +66,7 @@ export const AppContent: React.FC = () => {
     <div className="relative min-h-screen w-full overflow-hidden">
       <FloatingParticles />
       <NavigationHeader />
+      <BackgroundMusicPlayer />
 
       <main className="relative z-10 w-full min-h-screen">
         <AnimatePresence mode="wait">
